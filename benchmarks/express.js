@@ -4,6 +4,55 @@ const subapp = express();
 const subsubapp = express();
 const library = express();
 
+
+function one(req, res, next) {
+  req.one = true;
+  next();
+}
+
+function two(req, res, next) {
+  req.two = true;
+  next();
+}
+
+app
+  .use(one)
+  .use(two)
+  .get('/favicon.ico', _ => { })
+  .get('/', (req, res) => res.end('hello world'))
+  .post('/articles', (req, res) => res.end('POST /articles'))
+  .get('/articles', (req, res) => res.end('GET /articles'))
+  .get('/name/:name', (req, res) => res.end(`Name: ${req.params.name}`))
+  .get('/uno', (req, res) => res.end('GET /uno'))
+  .get('/dos', (req, res) => res.end('GET /dos'))
+  .get('/tres', (req, res) => res.end('GET /tres'))
+  .get('/quatro', (req, res) => res.end('GET /quatro'))
+  .get('/sinco', (req, res) => res.end('GET /sinco'))
+  .get('/seis', (req, res) => res.end('GET /seis'))
+  .get('/siete', (req, res) => res.end('GET /siete'))
+  .get('/ocho', (req, res) => res.end('GET /ocho'))
+  .get('/nueve', (req, res) => res.end('GET /nueve'))
+  .get('/diez', (req, res) => res.end('GET /diez'))
+
+  .get('/one', (req, res) => res.end('GET /uno'))
+  .get('/two', (req, res) => res.end('GET /dos'))
+  .get('/three', (req, res) => res.end('GET /tres'))
+  .get('/four', (req, res) => res.end('GET /quatro'))
+  .get('/five', (req, res) => res.end('GET /sinco'))
+  .get('/six', (req, res) => res.end('GET /seis'))
+  .get('/seven', (req, res) => res.end('GET /siete'))
+  .get('/eigth', (req, res) => res.end('GET /ocho'))
+  .get('/nine', (req, res) => res.end('GET /nueve'))
+  .get('/ten', (req, res) => res.end('GET /diez'))
+
+  .get('/user/:id', (req, res) => {
+    res.end(`User: ${req.params.id}`);
+  })
+  .get('/user/:userId/project/:projectId', (req, res) => {
+    res.end(`User: ${req.params.userId} Project: ${req.params.projectId}`);
+  });
+
+
 library.use((req, res, next) => {
   // console.log('library ware 1');
   next();
@@ -114,4 +163,4 @@ app.get('/account', (req, res) => res.end('/account'));
 
 app.get('/', (req, res) => res.end('im at / index'));
 
-app.listen(3000);
+app.listen(6000);
