@@ -19,6 +19,44 @@ describe('Dylan', function() {
   }));
   afterEach(() => app.server.close());
 
+  describe('Middleware', function() {
+    it('run on all requests', (done) => {
+      app.use((req, res, next) => {
+        res.locals.foo = 'yo';
+        next();
+      });
+      app.get('/foo', (req, res) => {
+        res.end(res.locals.foo);
+      });
+      app.listen(8888);
+
+      chai.request(host)
+        .get('/foo')
+        .end((err, res) => {
+          expect(res.text).to.equal('yo');
+          done();
+        });
+    });
+
+    it('mount middleware at pattern', (done) => {
+      app.use('/static', (req, res, next) => {
+        res.locals.static = 'i went through static';
+        next();
+      });
+      app.get('/static', (req, res) => {
+        res.end(res.locals.static);
+      });
+      app.listen(8888);
+
+      chai.request(host)
+        .get('/static')
+        .end((err, res) => {
+          expect(res.text).to.equal('i went through static');
+          done();
+        });
+    });
+  });
+
   describe('Router', function() {
     it('handles / hello world', (done) => {
       app.get('/', (req, res) => {
