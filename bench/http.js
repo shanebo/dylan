@@ -1,6 +1,6 @@
 const http = require('http');
 const hostname = '127.0.0.1';
-const port = 3400;
+const port = 3100;
 const server = http.createServer((req, res) => {
   if (req.url === '/favicon.ico') return;
   if (req.url === '/') return res.end('Hello');
