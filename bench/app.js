@@ -21,16 +21,24 @@ app
   });
 
 const articles = framework();
+articles.use((req, res, next) => {
+  req.three = true;
+  next();
+});
+articles.use((req, res, next) => {
+  req.four = true;
+  next();
+});
 articles.get('/', (req, res) => res.end('GET /library/articles'));
-articles.get('/popular', (req, res) => res.end('GET /library/articles/popular'));
+articles.get('/:sort', (req, res) => res.end(`GET /library/articles/${req.params.sort}`));
 
 const library = framework();
 library.use((req, res, next) => {
-  // library ware 1
+  req.five = true;
   next();
 });
 library.use((req, res, next) => {
-  // library ware 2
+  req.six = true;
   next();
 });
 library.get('/', (req, res) => res.end('GET /library'));
