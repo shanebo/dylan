@@ -4,7 +4,15 @@ const Response = require('./lib/response');
 const Dylan = require('./lib/app');
 const { extendProto } = require('./lib/utils');
 
-extendProto(http.IncomingMessage.prototype, Request);
+let setup = false;
+
 extendProto(http.ServerResponse.prototype, Response);
 
-module.exports = (opts) => new Dylan(opts);
+module.exports = (opts) => {
+  if (!setup) {
+    extendProto(http.IncomingMessage.prototype, Request(opts));
+    setup = true;
+  }
+
+  return new Dylan(opts);
+}
