@@ -8,14 +8,14 @@
     "framework",
     "router"
   ],
-  "repository": "dylanjs/dylan.git",
+  "repository": "shanebo/dylan.git",
   "author": "Shane Thacker <shane@steadymade.com>",
   "main": "./index",
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
-    "@dylan/engines": "github:dylanjs/engines#0.1.0",
+    "@dylan/engines": "github:shanebo/engines#0.1.0",
     "beard": "github:shanebo/beard#0.7.0",
     "coerce": "github:shanebo/coerce#0.1.0",
     "mime": "2.3.1",
