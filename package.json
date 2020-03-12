@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@dylan/engines": "github:dylanjs/engines#0.1.0",
-    "beard": "github:shanebo/beard#st/add-bundling-support",
+    "beard": "github:shanebo/beard#0.7.0",
     "coerce": "github:shanebo/coerce#0.1.0",
     "mime": "2.3.1",
     "qs": "6.9.0",
