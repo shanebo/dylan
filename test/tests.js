@@ -194,9 +194,8 @@ describe('Dylan', function() {
       chai.request(host)
         .get('/google')
         .redirects(0)
-        .then(Promise.reject)
-        .catch(({ response }) => {
-          expect(response).to.redirectTo('http://www.google.com');
+        .then((res) => {
+          expect(res).to.redirectTo('http://www.google.com');
           done();
         });
     });
