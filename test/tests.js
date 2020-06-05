@@ -6,9 +6,8 @@ chai.use(chaiHttp);
 
 describe('Dylan', function() {
   const host = 'http://127.0.0.1:8888';
-  let app;
-
-  beforeEach(() => app = dylan({
+  const request = chai.request(host);
+  let config = {
     engine: {
       name: 'beard',
       opts: {
@@ -16,7 +15,13 @@ describe('Dylan', function() {
         cache: true,
       }
     }
-  }));
+  };
+  let app;
+
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+    app = dylan(config);
+  });
   afterEach(() => app.server.close());
 
   describe('Middleware', function() {
@@ -30,7 +35,7 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/foo')
         .end((err, res) => {
           expect(res.text).to.equal('yo');
@@ -48,12 +53,104 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/static')
         .end((err, res) => {
           expect(res.text).to.equal('i went through static');
           done();
         });
+    });
+  });
+
+  it('returns 404s for unhandled routes', (done) => {
+    app.listen(8888);
+
+    request
+      .get('/invalid-path')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.text).to.include('Not Found');
+        done();
+      });
+  });
+
+  describe('error handler', function() {
+    it('sends a default error response on error', (done) => {
+      app.get('/error', (req, res) => {
+        throw new Error('Error!');
+      });
+      app.listen(8888);
+
+      request
+        .get('/error')
+        .end((err, res) => {
+          expect(res.status).to.equal(500);
+          expect(res.text).to.include('500');
+          done();
+        });
+    });
+
+    describe('in production', function() {
+      beforeEach(() => process.env.NODE_ENV = 'production');
+
+      it('sends a default error response on error', (done) => {
+        app.get('/error', (req, res) => {
+          throw new Error('Error!');
+        });
+        app.listen(8888);
+
+        request
+          .get('/error')
+          .end((err, res) => {
+            expect(res.status).to.equal(500);
+            expect(res.text).to.include('500');
+            done();
+          });
+      });
+    });
+
+    describe('configured', function() {
+      beforeEach(() => {
+        config.errorHandle = (err, req, res, next) => {
+          res.end('error!');
+        };
+      });
+
+      afterEach(() => delete config.errorHandle);
+
+      it('uses the error handler on error', (done) => {
+        app.get('/error', (req, res) => {
+          throw new Error('Error!');
+        });
+        app.listen(8888);
+
+        request
+          .get('/error')
+          .end((err, res) => {
+            expect(res.status).to.equal(500);
+            expect(res.text).to.include('error!');
+            done();
+          });
+      });
+
+      describe('in production', function() {
+        beforeEach(() => process.env.NODE_ENV = 'production');
+
+        it('sends a default error response on error', (done) => {
+          app.get('/error', (req, res) => {
+            throw new Error('Error!');
+          });
+          app.listen(8888);
+
+          request
+            .get('/error')
+            .end((err, res) => {
+              expect(res.status).to.equal(500);
+              expect(res.text).to.include('error!');
+              done();
+            });
+        });
+      });
     });
   });
 
@@ -64,7 +161,7 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/')
         .end((err, res) => {
           expect(res.text).to.equal('hello world');
@@ -78,7 +175,7 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/jack-black')
         .end((err, res) => {
           expect(res.text).to.equal('jack-black');
@@ -95,13 +192,13 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/articles/salvation/dylan')
         .end((err, res) => {
           expect(res.text).to.equal('articles about salvation by dylan');
         });
 
-      chai.request(host)
+      request
         .get('/particular-baptist/lookup/spurgeon')
         .end((err, res) => {
           expect(res.text).to.equal('particular-baptist with id spurgeon');
@@ -121,13 +218,13 @@ describe('Dylan', function() {
         app.use('/library', library);
         app.listen(8888);
 
-        chai.request(host)
+        request
           .get('/library')
           .end((err, res) => {
             expect(res.text).to.equal('library index');
           });
 
-        chai.request(host)
+        request
           .get('/library/popular')
           .end((err, res) => {
             expect(res.text).to.equal('popular library');
@@ -146,7 +243,7 @@ describe('Dylan', function() {
         app.use('/library', library);
         app.listen(8888);
 
-        chai.request(host)
+        request
           .get('/library/articles')
           .end((err, res) => {
             expect(res.text).to.equal('library articles index');
@@ -168,13 +265,13 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/number/dos')
         .end((err, res) => {
           expect(res.text).to.equal('dos');
         });
 
-      chai.request(host)
+      request
         .get('/number/cuatro')
         .end((err, res) => {
           expect(res.text).to.include('404');
@@ -191,7 +288,7 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/google')
         .redirects(0)
         .then((res) => {
@@ -206,7 +303,7 @@ describe('Dylan', function() {
       });
       app.listen(8888);
 
-      chai.request(host)
+      request
         .get('/')
         .end((err, res) => {
           expect(res.status).to.equal(200);
