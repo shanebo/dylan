@@ -183,6 +183,36 @@ describe('Dylan', function() {
         });
     });
 
+    it('handles regex validation for params', (done) => {
+      app.get('/:name(uno|dos)', (req, res) => {
+        res.end(req.params.name);
+      });
+      app.listen(8888);
+
+      request
+        .get('/uno')
+        .end((err, res) => {
+          expect(res.text).to.equal('uno');
+          done();
+        });
+    });
+
+    it('handles optional path parts', (done) => {
+      app.get('/:uno(/:dos)?(/:tres)?(/:quatro)?', (req, res) => {
+        res.end('uno');
+      });
+      app.listen(8888);
+
+      request
+        .get('/uno/dos/quatro')
+        .end((err, res) => {
+          expect(res.text).to.equal('uno');
+          done();
+        });
+    });
+
+
+
     it('handles nested params', (done) => {
       app.get('/articles/:category/:author', (req, res) => {
         res.end(`articles about ${req.params.category} by ${req.params.author}`);
