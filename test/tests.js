@@ -197,16 +197,16 @@ describe('Dylan', function() {
         });
     });
 
-    it('handles optional path parts', (done) => {
-      app.get('/:uno(/:dos)?(/:tres)?(/:quatro)?', (req, res) => {
-        res.end('uno');
+    it('handles optional path segments', (done) => {
+      app.get('/:uno/:dos?/:tres?/:quatro?', (req, res) => {
+        res.end(JSON.stringify(req.params));
       });
       app.listen(8888);
 
       request
-        .get('/uno/dos/quatro')
+        .get('/library/articles/hello-world')
         .end((err, res) => {
-          expect(res.text).to.equal('uno');
+          expect(res.text).to.equal('{"uno":"library","dos":"articles","tres":"hello-world"}');
           done();
         });
     });
