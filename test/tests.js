@@ -197,20 +197,47 @@ describe('Dylan', function() {
         });
     });
 
-    it('handles optional path parts', (done) => {
-      app.get('/:uno(/:dos)?(/:tres)?(/:quatro)?', (req, res) => {
-        res.end('uno');
+    it('handles optional path segments', (done) => {
+      app.get('/:uno/:dos?/:tres?/:quatro?', (req, res) => {
+        res.end(JSON.stringify(req.params));
       });
       app.listen(8888);
 
       request
-        .get('/uno/dos/quatro')
+        .get('/library/articles/hello-world')
         .end((err, res) => {
-          expect(res.text).to.equal('uno');
+          expect(res.text).to.equal('{"uno":"library","dos":"articles","tres":"hello-world"}');
           done();
         });
     });
 
+    it('handles explicit optional path segments', (done) => {
+      app.get('/:uno(/:dos)?(/:tres)?', (req, res) => {
+        res.end(JSON.stringify(req.params));
+      });
+      app.listen(8888);
+
+      request
+        .get('/library/articles/hello-world')
+        .end((err, res) => {
+          expect(res.text).to.equal('{"uno":"library","dos":"articles","tres":"hello-world"}');
+          done();
+        });
+    });
+
+    it('handles prefixed optional path segments', (done) => {
+      app.get('/:type(/about/:topic?)?(/on/:scripture)?(/by/:author)?(/from/:year)?(/sorted/:sort)?', (req, res) => {
+        res.end(JSON.stringify(req.params));
+      });
+      app.listen(8888);
+
+      request
+        .get('/resources/about/on/romans/by/spurgeon/from/1919/sorted/newest')
+        .end((err, res) => {
+          expect(res.text).to.equal('{"type":"resources","scripture":"romans","author":"spurgeon","year":"1919","sort":"newest"}');
+          done();
+        });
+    });
 
 
     it('handles nested params', (done) => {
