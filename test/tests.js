@@ -239,6 +239,75 @@ describe('Dylan', function() {
         });
     });
 
+    it('provides null querystring', (done) => {
+      app.get('/querystring', (req, res) => {
+        res.end(JSON.stringify(req.querystring));
+      });
+      app.listen(8888);
+
+      request
+        .get('/querystring')
+        .end((err, res) => {
+          expect(res.text).to.equal('null');
+          done();
+        });
+    });
+
+    it('provides querystring', (done) => {
+      app.get('/querystring', (req, res) => {
+        res.end(req.querystring);
+      });
+      app.listen(8888);
+
+      request
+        .get('/querystring?foo=boo')
+        .end((err, res) => {
+          expect(res.text).to.equal('foo=boo');
+          done();
+        });
+    });
+
+    it('provides empty query object', (done) => {
+      app.get('/query', (req, res) => {
+        res.end(JSON.stringify(req.query));
+      });
+      app.listen(8888);
+
+      request
+        .get('/query')
+        .end((err, res) => {
+          expect(res.text).to.equal('{}');
+          done();
+        });
+    });
+
+    it('provides query object', (done) => {
+      app.get('/query', (req, res) => {
+        res.end(JSON.stringify(req.query));
+      });
+      app.listen(8888);
+
+      request
+        .get('/query?foo=boo&nacho=libre')
+        .end((err, res) => {
+          expect(res.text).to.equal('{"foo":"boo","nacho":"libre"}');
+          done();
+        });
+    });
+
+    it('provides query clean of empty params', (done) => {
+      app.get('/query', (req, res) => {
+        res.end(JSON.stringify(req.query));
+      });
+      app.listen(8888);
+
+      request
+        .get('/query?foo=&yo=')
+        .end((err, res) => {
+          expect(res.text).to.equal('{}');
+          done();
+        });
+    });
 
     it('handles nested params', (done) => {
       app.get('/articles/:category/:author', (req, res) => {
