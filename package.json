@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@dylan/engines": "github:shanebo/engines#0.1.0",
-    "beard": "github:shanebo/beard#0.7.0",
+    "beard": "github:shanebo/beard#0.7.1",
     "coerce": "github:shanebo/coerce#0.1.0",
     "mime": "2.3.1",
     "qs": "6.9.0",
