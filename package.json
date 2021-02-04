@@ -1,6 +1,6 @@
 {
   "name": "dylan",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A tiny lightning fast server, router, and middleware framework.",
   "license": "MIT",
   "keywords": [
