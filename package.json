@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@dylan/coerce": "~0.2.0",
-    "@dylan/engines": "~0.1.1",
-    "beard": "~0.8.1",
+    "@dylan/engines": "github:shanebo/engines#add-balm-support",
+    "beard": "github:shanebo/beard#0.9.0",
     "mrmime": "~1.0.0",
     "parseurl": "~1.3.3",
     "qs": "~6.10.1",
