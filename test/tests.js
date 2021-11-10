@@ -13,7 +13,7 @@ describe('Dylan', function() {
       name: 'beard',
       opts: {
         templates: {
-           [resolve('test/template')]: '{{block foo}}foo{{endblock}}content{{foo}}',
+           [resolve('test/template')]: '{{block foo}}{{exists override}}{{override}}{{else}}foo{{end}}{{endblock}}content {{foo}}',
         },
         cache: true,
       }
@@ -426,7 +426,7 @@ describe('Dylan', function() {
         });
     });
 
-    it('can render', (done) => {
+    it('can render relative paths', (done) => {
       app.get('/', (req, res) => {
         res.render('template');
       });
@@ -436,7 +436,37 @@ describe('Dylan', function() {
         .get('/')
         .end((err, res) => {
           expect(res.status).to.equal(200);
-          expect(res.text.trim()).to.equal('contentfoo');
+          expect(res.text.trim()).to.equal('content foo');
+          done();
+        });
+    });
+
+    it('can render tilde paths', (done) => {
+      app.get('/', (req, res) => {
+        res.render('~/template');
+      });
+      app.listen(8888);
+
+      request
+        .get('/')
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.text.trim()).to.equal('content foo');
+          done();
+        });
+    });
+
+    it('can render with data', (done) => {
+      app.get('/', (req, res) => {
+        res.render('~/template', { override: 'overridden' });
+      });
+      app.listen(8888);
+
+      request
+        .get('/')
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.text.trim()).to.equal('content overridden');
           done();
         });
     });
