@@ -1,3 +1,4 @@
+const { resolve } = require('path');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = chai.expect;
@@ -11,7 +12,9 @@ describe('Dylan', function() {
     engine: {
       name: 'beard',
       opts: {
-        root: process.cwd(),
+        templates: {
+           [resolve('test/template')]: '{{block foo}}foo{{endblock}}content{{foo}}',
+        },
         cache: true,
       }
     }
@@ -425,7 +428,7 @@ describe('Dylan', function() {
 
     it('can render', (done) => {
       app.get('/', (req, res) => {
-        res.render('test');
+        res.render('template');
       });
       app.listen(8888);
 
@@ -433,7 +436,7 @@ describe('Dylan', function() {
         .get('/')
         .end((err, res) => {
           expect(res.status).to.equal(200);
-          expect(res.text.trim()).to.equal('content foo block');
+          expect(res.text.trim()).to.equal('contentfoo');
           done();
         });
     });
