@@ -15,7 +15,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@dylan/coerce": "~0.2.0",
+    "@dylan/coerce": "~0.2.1",
     "@dylan/engines": "~0.1.2",
     "mrmime": "~1.0.0",
     "parseurl": "~1.3.3",
